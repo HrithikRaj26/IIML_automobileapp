@@ -98,7 +98,7 @@ export interface AllocationResult {
   total_exposure_protected: number;
   planner_warning: string;
   confidence: "high" | "medium" | "low";
-  source?: "claude" | "knapsack_fallback"; // added client-side, not part of the LLM contract
+  source?: "gemini" | "knapsack_fallback"; // added client-side, not part of the LLM contract
 }
 
 export interface Decision {
