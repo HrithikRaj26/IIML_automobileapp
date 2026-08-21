@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import { loadAssets, loadJobs, getBoardData } from "@/lib/data";
 import { computeKnapsackBaseline } from "@/lib/knapsack";
-import { getGeminiClient, GEMINI_MODEL, stripJsonFences } from "@/lib/gemini";
+import { getGeminiClient, GEMINI_MODEL, stripJsonFences, repairCommaGroupedNumbers } from "@/lib/gemini";
 import type { AllocationResult } from "@/lib/types";
 
 export const maxDuration = 30; // cap generation time — cold start + long output = timeout (PRD §15)
@@ -193,10 +193,22 @@ Return only the JSON object matching the required schema. Do not invent job IDs,
 
     const text = response.text;
     if (!text) {
-      return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours));
+      return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours, "Gemini returned an empty response"));
     }
 
-    const parsed = JSON.parse(stripJsonFences(text)) as AllocationResult;
+    const cleaned = stripJsonFences(text);
+    let parsed: AllocationResult;
+    try {
+      parsed = JSON.parse(cleaned) as AllocationResult;
+    } catch {
+      try {
+        parsed = JSON.parse(repairCommaGroupedNumbers(cleaned)) as AllocationResult;
+      } catch (parseErr) {
+        const parseMessage = parseErr instanceof Error ? parseErr.message : String(parseErr);
+        const snippet = cleaned.slice(0, 400);
+        throw new Error(`JSON parse failed: ${parseMessage} | raw response (first 400 chars): ${snippet}`);
+      }
+    }
     parsed.source = "gemini";
     return NextResponse.json(parsed);
   } catch (err) {

@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
-import { getGeminiClient, GEMINI_MODEL, stripJsonFences } from "@/lib/gemini";
+import { getGeminiClient, GEMINI_MODEL, stripJsonFences, repairCommaGroupedNumbers } from "@/lib/gemini";
 import { FAILURE_MODE_TAXONOMY, ClassificationResult } from "@/lib/types";
 
 export const maxDuration = 30;
@@ -78,7 +78,13 @@ Return only the JSON object matching the schema. Do not invent details not prese
       return NextResponse.json(fallbackClassification());
     }
 
-    const parsed = JSON.parse(stripJsonFences(text)) as ClassificationResult;
+    const parsed = (() => {
+      try {
+        return JSON.parse(stripJsonFences(text)) as ClassificationResult;
+      } catch {
+        return JSON.parse(repairCommaGroupedNumbers(stripJsonFences(text))) as ClassificationResult;
+      }
+    })();
     return NextResponse.json(parsed);
   } catch (err) {
     console.error("Gemini classification failed:", err);

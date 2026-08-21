@@ -30,3 +30,18 @@ export function stripJsonFences(text: string): string {
   const fenceMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
   return fenceMatch ? fenceMatch[1].trim() : trimmed;
 }
+
+/**
+ * Repairs the one malformed-JSON pattern we've actually seen in practice:
+ * a bare numeric value written with thousands-separator commas (e.g.
+ * "exposure_protected": 1,40,665.81), which the model can lapse into since
+ * the whole UI displays money in that Indian-grouped style. Only touches
+ * numbers immediately after a colon (bare JSON values) — a comma-grouped
+ * number mentioned inside a quoted string is untouched, since string values
+ * start with a quote, not a digit, right after the colon.
+ */
+export function repairCommaGroupedNumbers(text: string): string {
+  return text.replace(/:(\s*)(-?\d[\d,]*\.?\d*)(?=\s*[,}\]])/g, (_match, ws, num) => {
+    return `:${ws}${num.replace(/,/g, "")}`;
+  });
+}
