@@ -153,8 +153,11 @@ export default function WindowPlanner({ jobs, assets }: Props) {
       {result && (
         <>
           {result.source === "knapsack_fallback" && (
-            <div className="bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)] text-[var(--accent-amber)] rounded-lg px-4 py-3 text-sm font-medium">
-              Optimiser only — advisory unavailable. Showing the crew-hour-optimal baseline without soft-constraint adjustment.
+            <div className="bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)] text-[var(--accent-amber)] rounded-lg px-4 py-3 text-sm font-medium space-y-1">
+              <div>Optimiser only — advisory unavailable. Showing the crew-hour-optimal baseline without soft-constraint adjustment.</div>
+              {result.debug_error && (
+                <div className="font-[family-name:var(--font-mono)] text-xs opacity-80">{result.debug_error}</div>
+              )}
             </div>
           )}
 

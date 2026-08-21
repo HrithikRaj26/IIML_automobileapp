@@ -75,8 +75,9 @@ const RESPONSE_SCHEMA = {
 
 function knapsackOnlyFallback(
   baseline: ReturnType<typeof computeKnapsackBaseline>,
-  windowCrewHours: number
-): AllocationResult {
+  windowCrewHours: number,
+  debugError?: string
+): AllocationResult & { debug_error?: string } {
   return {
     selected: baseline.selected.map((l) => ({
       job_id: l.job.id,
@@ -97,6 +98,7 @@ function knapsackOnlyFallback(
     planner_warning: "",
     confidence: "low",
     source: "knapsack_fallback",
+    ...(debugError ? { debug_error: debugError } : {}),
   };
 }
 
@@ -127,7 +129,7 @@ export async function POST(req: NextRequest) {
   // No API key configured — degrade to the knapsack baseline immediately,
   // never a blank screen (PRD §15).
   if (!process.env.GEMINI_API_KEY) {
-    return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours));
+    return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours, "GEMINI_API_KEY is not set in this environment"));
   }
 
   const assets = loadAssets();
@@ -198,7 +200,8 @@ Return only the JSON object matching the required schema. Do not invent job IDs,
     parsed.source = "gemini";
     return NextResponse.json(parsed);
   } catch (err) {
-    console.error("Gemini allocation failed, falling back to knapsack baseline:", err);
-    return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours));
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Gemini allocation failed, falling back to knapsack baseline:", message);
+    return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours, message));
   }
 }

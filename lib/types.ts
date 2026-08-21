@@ -99,6 +99,7 @@ export interface AllocationResult {
   planner_warning: string;
   confidence: "high" | "medium" | "low";
   source?: "gemini" | "knapsack_fallback"; // added client-side, not part of the LLM contract
+  debug_error?: string; // surfaced only in the fallback path, to speed up debugging
 }
 
 export interface Decision {
