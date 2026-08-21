@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  /* Industrial control-room palette */
+  --bg: #14171a;
+  --surface: #1d2126;
+  --surface-raised: #262b31;
+  --border: #333a41;
+  --text: #e8eaed;
+  --text-muted: #8b939b;
+  --accent-amber: #f0a83a;
+  --accent-teal: #4fb8ae;
+  --danger: #e5484d;
+  --success: #5fbf77;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-teal: var(--accent-teal);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+  --font-body: var(--font-body);
+}
+
+:root {
+  /* System-font stacks — no external font fetch, one less demo-day risk.
+     Condensed/industrial feel comes from letter-spacing + weight, not the typeface fetch. */
+  --font-display: ui-sans-serif, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* Faint schematic grid, evokes a plant-floor layout drawing */
+.schematic-bg {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+  opacity: 0.35;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 6px;
+}

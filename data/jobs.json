@@ -1,0 +1,113 @@
+[
+  {
+    "id": "J-01",
+    "asset_id": "WG-07",
+    "description": "Weld tip dress + gun alignment check",
+    "est_hours": 2,
+    "crew_required": 1,
+    "skill": "weld_maintenance",
+    "spare_status": "in_stock",
+    "isolation_point": "ISO-A"
+  },
+  {
+    "id": "J-02",
+    "asset_id": "RB-03",
+    "description": "Gearbox bearing replacement",
+    "est_hours": 5,
+    "crew_required": 2,
+    "skill": "robot_programming",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-03",
+    "asset_id": "CV-04",
+    "description": "Drive motor bearing + belt tension",
+    "est_hours": 4,
+    "crew_required": 1,
+    "skill": "mechanical",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-04",
+    "asset_id": "RB-05",
+    "description": "Axis 3 servo inspection",
+    "est_hours": 3,
+    "crew_required": 1,
+    "skill": "robot_programming",
+    "spare_status": "in_transit",
+    "spare_eta": "Tuesday"
+  },
+  {
+    "id": "J-05",
+    "asset_id": "PR-03",
+    "description": "Feeder clutch and sensor recalibration",
+    "est_hours": 3,
+    "crew_required": 1,
+    "skill": "mechanical",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-06",
+    "asset_id": "SL-06",
+    "description": "Applicator nozzle + seal replacement",
+    "est_hours": 2,
+    "crew_required": 1,
+    "skill": "mechanical",
+    "spare_status": "in_stock",
+    "isolation_point": "ISO-A"
+  },
+  {
+    "id": "J-07",
+    "asset_id": "WG-02",
+    "description": "Routine tip dress",
+    "est_hours": 1.5,
+    "crew_required": 1,
+    "skill": "weld_maintenance",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-08",
+    "asset_id": "WG-11",
+    "description": "Cable and hose inspection",
+    "est_hours": 2,
+    "crew_required": 1,
+    "skill": "weld_maintenance",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-09",
+    "asset_id": "RB-01",
+    "description": "Lubrication service, full axis set",
+    "est_hours": 3,
+    "crew_required": 1,
+    "skill": "robot_programming",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-10",
+    "asset_id": "CV-09",
+    "description": "Roller replacement, section 4",
+    "est_hours": 4,
+    "crew_required": 1,
+    "skill": "mechanical",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-11",
+    "asset_id": "PR-08",
+    "description": "Feeder alignment check",
+    "est_hours": 2.5,
+    "crew_required": 1,
+    "skill": "mechanical",
+    "spare_status": "in_stock"
+  },
+  {
+    "id": "J-12",
+    "asset_id": "TC-05",
+    "description": "Clamp actuator seal replacement",
+    "est_hours": 3,
+    "crew_required": 1,
+    "skill": "electrical",
+    "spare_status": "in_stock"
+  }
+]
