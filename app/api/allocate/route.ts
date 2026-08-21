@@ -7,7 +7,7 @@
 // returns both selections and rejections with reasons a planner will act on.
 
 import { NextRequest, NextResponse } from "next/server";
-import { Type } from "@google/genai";
+import { Type, ThinkingLevel } from "@google/genai";
 import { loadAssets, loadJobs, getBoardData } from "@/lib/data";
 import { computeKnapsackBaseline } from "@/lib/knapsack";
 import { getGeminiClient, GEMINI_MODEL, stripJsonFences, repairCommaGroupedNumbers } from "@/lib/gemini";
@@ -173,7 +173,7 @@ Return only the JSON object matching the required schema. Do not invent job IDs,
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA,
         maxOutputTokens: 8192,
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
       },
     });
 

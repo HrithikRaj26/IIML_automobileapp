@@ -4,7 +4,7 @@
 // just run.
 
 import { NextRequest, NextResponse } from "next/server";
-import { Type } from "@google/genai";
+import { Type, ThinkingLevel } from "@google/genai";
 import { getGeminiClient, GEMINI_MODEL, stripJsonFences, repairCommaGroupedNumbers } from "@/lib/gemini";
 import { FAILURE_MODE_TAXONOMY, ClassificationResult } from "@/lib/types";
 
@@ -70,7 +70,7 @@ Return only the JSON object matching the schema. Do not invent details not prese
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA,
         maxOutputTokens: 2048,
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
       },
     });
 
