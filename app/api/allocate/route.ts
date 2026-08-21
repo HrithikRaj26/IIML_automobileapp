@@ -102,20 +102,7 @@ function knapsackOnlyFallback(
   };
 }
 
-export async function POST(req: NextRequest) {
-  let windowHours: number;
-  let crewCount: number;
-  try {
-    const body = await req.json();
-    windowHours = Number(body.windowHours);
-    crewCount = Number(body.crewCount);
-    if (!Number.isFinite(windowHours) || !Number.isFinite(crewCount) || windowHours <= 0 || crewCount <= 0) {
-      return NextResponse.json({ error: "windowHours and crewCount must be positive numbers" }, { status: 400 });
-    }
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
+async function runAllocation(windowHours: number, crewCount: number, verbose: boolean) {
   const windowCrewHours = windowHours * crewCount;
   const jobs = loadJobs();
   const board = getBoardData();
@@ -126,10 +113,8 @@ export async function POST(req: NextRequest) {
 
   const baseline = computeKnapsackBaseline(jobs, exposureByAsset, windowCrewHours);
 
-  // No API key configured — degrade to the knapsack baseline immediately,
-  // never a blank screen (PRD §15).
   if (!process.env.GEMINI_API_KEY) {
-    return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours, "GEMINI_API_KEY is not set in this environment"));
+    return knapsackOnlyFallback(baseline, windowCrewHours, "GEMINI_API_KEY is not set in this environment");
   }
 
   const assets = loadAssets();
@@ -194,17 +179,27 @@ Return only the JSON object matching the required schema. Do not invent job IDs,
 
     const text = response.text;
     const finishReason = response.candidates?.[0]?.finishReason;
+    const usage = response.usageMetadata;
+
+    if (verbose) {
+      return {
+        _debug: true,
+        finishReason: finishReason ?? null,
+        usageMetadata: usage ?? null,
+        rawTextLength: text?.length ?? 0,
+        rawText: text ?? null,
+      };
+    }
+
     if (finishReason === "MAX_TOKENS") {
-      return NextResponse.json(
-        knapsackOnlyFallback(
-          baseline,
-          windowCrewHours,
-          "Gemini response was truncated (hit maxOutputTokens) before finishing valid JSON"
-        )
+      return knapsackOnlyFallback(
+        baseline,
+        windowCrewHours,
+        "Gemini response was truncated (hit maxOutputTokens) before finishing valid JSON"
       );
     }
     if (!text) {
-      return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours, "Gemini returned an empty response"));
+      return knapsackOnlyFallback(baseline, windowCrewHours, "Gemini returned an empty response");
     }
 
     const cleaned = stripJsonFences(text);
@@ -216,15 +211,49 @@ Return only the JSON object matching the required schema. Do not invent job IDs,
         parsed = JSON.parse(repairCommaGroupedNumbers(cleaned)) as AllocationResult;
       } catch (parseErr) {
         const parseMessage = parseErr instanceof Error ? parseErr.message : String(parseErr);
-        const snippet = cleaned.slice(0, 400);
-        throw new Error(`JSON parse failed: ${parseMessage} | raw response (first 400 chars): ${snippet}`);
+        const snippet = cleaned.slice(0, 1000);
+        throw new Error(`JSON parse failed: ${parseMessage} | raw response (first 1000 chars): ${snippet}`);
       }
     }
     parsed.source = "gemini";
-    return NextResponse.json(parsed);
+    return parsed;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("Gemini allocation failed, falling back to knapsack baseline:", message);
-    return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours, message));
+    if (verbose) {
+      return { _debug: true, error: message };
+    }
+    return knapsackOnlyFallback(baseline, windowCrewHours, message);
   }
+}
+
+export async function POST(req: NextRequest) {
+  let windowHours: number;
+  let crewCount: number;
+  try {
+    const body = await req.json();
+    windowHours = Number(body.windowHours);
+    crewCount = Number(body.crewCount);
+    if (!Number.isFinite(windowHours) || !Number.isFinite(crewCount) || windowHours <= 0 || crewCount <= 0) {
+      return NextResponse.json({ error: "windowHours and crewCount must be positive numbers" }, { status: 400 });
+    }
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const result = await runAllocation(windowHours, crewCount, false);
+  return NextResponse.json(result);
+}
+
+// TEMPORARY diagnostic endpoint — GET /api/allocate?windowHours=6&crewCount=3&debug=1
+// Returns the raw Gemini output directly instead of the parsed/fallback result,
+// so the actual failure can be inspected without round-tripping through the UI.
+// Remove once the allocation pipeline is confirmed stable.
+export async function GET(req: NextRequest) {
+  const params = req.nextUrl.searchParams;
+  const windowHours = Number(params.get("windowHours") ?? "6");
+  const crewCount = Number(params.get("crewCount") ?? "3");
+  const verbose = params.get("debug") === "1";
+  const result = await runAllocation(windowHours, crewCount, verbose);
+  return NextResponse.json(result);
 }
