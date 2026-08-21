@@ -176,17 +176,31 @@ export default function WindowPlanner({ jobs, assets }: Props) {
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-[var(--text-muted)]">Confidence:</span>
-            <span
-              className="px-2 py-0.5 rounded-full text-xs font-medium"
-              style={{
-                backgroundColor: `${CONFIDENCE_COLOR[result.confidence] ?? "var(--text-muted)"}22`,
-                color: CONFIDENCE_COLOR[result.confidence] ?? "var(--text-muted)",
-              }}
-            >
-              {result.confidence}
-            </span>
+          <div className="flex items-center gap-4 text-sm flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-[var(--text-muted)]">Source:</span>
+              <span
+                className="px-2 py-0.5 rounded-full text-xs font-medium"
+                style={{
+                  backgroundColor: result.source === "gemini" ? "var(--accent-teal)22" : "var(--accent-amber)22",
+                  color: result.source === "gemini" ? "var(--accent-teal)" : "var(--accent-amber)",
+                }}
+              >
+                {result.source === "gemini" ? "Gemini-adjusted" : "Optimiser only"}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[var(--text-muted)]">Confidence:</span>
+              <span
+                className="px-2 py-0.5 rounded-full text-xs font-medium"
+                style={{
+                  backgroundColor: `${CONFIDENCE_COLOR[result.confidence] ?? "var(--text-muted)"}22`,
+                  color: CONFIDENCE_COLOR[result.confidence] ?? "var(--text-muted)",
+                }}
+              >
+                {result.confidence}
+              </span>
+            </div>
           </div>
 
           {/* Selected */}

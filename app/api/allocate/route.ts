@@ -216,6 +216,10 @@ Return only the JSON object matching the required schema. Do not invent job IDs,
       }
     }
     parsed.source = "gemini";
+    console.log(
+      `[/api/allocate] Gemini call succeeded. Tokens — prompt=${usage?.promptTokenCount ?? "?"} ` +
+        `thoughts=${usage?.thoughtsTokenCount ?? 0} output=${usage?.candidatesTokenCount ?? "?"}`
+    );
     return parsed;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
@@ -242,18 +246,5 @@ export async function POST(req: NextRequest) {
   }
 
   const result = await runAllocation(windowHours, crewCount, false);
-  return NextResponse.json(result);
-}
-
-// TEMPORARY diagnostic endpoint — GET /api/allocate?windowHours=6&crewCount=3&debug=1
-// Returns the raw Gemini output directly instead of the parsed/fallback result,
-// so the actual failure can be inspected without round-tripping through the UI.
-// Remove once the allocation pipeline is confirmed stable.
-export async function GET(req: NextRequest) {
-  const params = req.nextUrl.searchParams;
-  const windowHours = Number(params.get("windowHours") ?? "6");
-  const crewCount = Number(params.get("crewCount") ?? "3");
-  const verbose = params.get("debug") === "1";
-  const result = await runAllocation(windowHours, crewCount, verbose);
   return NextResponse.json(result);
 }
