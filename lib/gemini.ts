@@ -2,7 +2,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const MODEL = "gemini-2.5-flash"; // free-tier model
+const MODEL = "gemini-3.6-flash"; // free-tier eligible; gemini-2.5-flash was retired for new API users
 
 let client: GoogleGenAI | null = null;
 
