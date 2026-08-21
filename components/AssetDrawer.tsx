@@ -32,26 +32,26 @@ export default function AssetDrawer({ asset, risk, exposure, daily, onClose }: P
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div className="relative w-full max-w-xl bg-[var(--surface)] border-l border-[var(--border)] h-full overflow-y-auto">
-        <div className="sticky top-0 bg-[var(--surface)] border-b border-[var(--border)] px-6 py-4 flex items-start justify-between z-10">
-          <div>
+        <div className="sticky top-0 bg-[var(--surface)] border-b border-[var(--border)] px-4 sm:px-6 py-3 sm:py-4 flex items-start justify-between z-10">
+          <div className="min-w-0">
             <div className="font-[family-name:var(--font-mono)] text-xs text-[var(--text-muted)]">{asset.id}</div>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold">{asset.name}</h2>
-            <div className="text-sm text-[var(--text-muted)]">{asset.station}</div>
+            <h2 className="font-[family-name:var(--font-display)] text-lg sm:text-2xl font-semibold truncate">{asset.name}</h2>
+            <div className="text-xs sm:text-sm text-[var(--text-muted)] truncate">{asset.station}</div>
           </div>
           <button
             onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text)] text-2xl leading-none px-2"
+            className="text-[var(--text-muted)] hover:text-[var(--text)] text-2xl leading-none px-2 shrink-0"
             aria-label="Close"
           >
             ×
           </button>
         </div>
 
-        <div className="p-6 space-y-8">
+        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
           {/* Top-line numbers */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <Stat label="Risk index" value={risk.risk_index.toFixed(2)} accent="amber" />
-            <Stat label="MTTR / buffer" value={`${asset.mttr_minutes} / ${asset.downstream_buffer_minutes} min`} />
+            <Stat label="MTTR / buffer" value={`${asset.mttr_minutes}/${asset.downstream_buffer_minutes}m`} />
             <Stat label="₹ Exposure" value={fmtRupee(exposure.exposure_rupees)} accent="teal" />
           </div>
 
@@ -128,9 +128,9 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
   const color =
     accent === "amber" ? "var(--accent-amber)" : accent === "teal" ? "var(--accent-teal)" : "var(--text)";
   return (
-    <div className="bg-[var(--surface-raised)] rounded-lg px-3 py-2">
-      <div className="text-[10px] uppercase tracking-wide text-[var(--text-muted)]">{label}</div>
-      <div className="font-[family-name:var(--font-mono)] text-lg font-medium" style={{ color }}>
+    <div className="bg-[var(--surface-raised)] rounded-lg px-2 sm:px-3 py-2 min-w-0">
+      <div className="text-[9px] sm:text-[10px] uppercase tracking-wide text-[var(--text-muted)] truncate">{label}</div>
+      <div className="font-[family-name:var(--font-mono)] text-sm sm:text-lg font-medium truncate" style={{ color }}>
         {value}
       </div>
     </div>

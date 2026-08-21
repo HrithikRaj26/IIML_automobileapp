@@ -99,17 +99,17 @@ export default function WindowPlanner({ jobs, assets }: Props) {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-8 space-y-10">
+    <div className="mx-auto max-w-6xl px-3 sm:px-6 py-5 sm:py-8 space-y-8 sm:space-y-10">
       <div>
-        <h1 className="font-[family-name:var(--font-display)] text-3xl font-bold">Window Planner</h1>
-        <p className="text-sm text-[var(--text-muted)] mt-1">
+        <h1 className="font-[family-name:var(--font-display)] text-xl sm:text-3xl font-bold">Window Planner</h1>
+        <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
           Set the shutdown window. A knapsack baseline computes the exposure-optimal job set;
           Gemini adjusts it for spare availability, isolation batching, and explains the trade-offs.
         </p>
       </div>
 
       {/* Window controls */}
-      <section className="flex flex-wrap items-end gap-6 bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5">
+      <section className="flex flex-wrap items-end gap-3 sm:gap-6 bg-[var(--surface)] border border-[var(--border)] rounded-xl p-3 sm:p-5">
         <label className="flex flex-col gap-1">
           <span className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Window hours</span>
           <input
@@ -118,7 +118,7 @@ export default function WindowPlanner({ jobs, assets }: Props) {
             max={24}
             value={windowHours}
             onChange={(e) => setWindowHours(Number(e.target.value))}
-            className="w-24 bg-[var(--surface-raised)] border border-[var(--border)] rounded-md px-3 py-1.5 font-[family-name:var(--font-mono)]"
+            className="w-20 sm:w-24 bg-[var(--surface-raised)] border border-[var(--border)] rounded-md px-2 sm:px-3 py-1.5 font-[family-name:var(--font-mono)]"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -129,16 +129,16 @@ export default function WindowPlanner({ jobs, assets }: Props) {
             max={10}
             value={crewCount}
             onChange={(e) => setCrewCount(Number(e.target.value))}
-            className="w-24 bg-[var(--surface-raised)] border border-[var(--border)] rounded-md px-3 py-1.5 font-[family-name:var(--font-mono)]"
+            className="w-20 sm:w-24 bg-[var(--surface-raised)] border border-[var(--border)] rounded-md px-2 sm:px-3 py-1.5 font-[family-name:var(--font-mono)]"
           />
         </label>
-        <div className="text-sm text-[var(--text-muted)] font-[family-name:var(--font-mono)] pb-2">
+        <div className="text-xs sm:text-sm text-[var(--text-muted)] font-[family-name:var(--font-mono)] pb-2">
           = {windowCrewHours} crew-hours available
         </div>
         <button
           onClick={handleAllocate}
           disabled={loading}
-          className="ml-auto px-5 py-2 rounded-md bg-[var(--accent-amber)] text-[#14171a] font-semibold disabled:opacity-50"
+          className="w-full sm:w-auto sm:ml-auto px-5 py-2 rounded-md bg-[var(--accent-amber)] text-[#14171a] font-semibold disabled:opacity-50"
         >
           {loading ? "Allocating…" : "Allocate"}
         </button>
@@ -205,7 +205,7 @@ export default function WindowPlanner({ jobs, assets }: Props) {
 
           {/* Selected */}
           <section>
-            <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold mb-3">
+            <h2 className="font-[family-name:var(--font-display)] text-lg sm:text-xl font-semibold mb-3">
               Selected — this window
             </h2>
             <div className="space-y-2">
@@ -218,8 +218,8 @@ export default function WindowPlanner({ jobs, assets }: Props) {
                       overridden ? "border-[var(--danger)]" : "border-[var(--border)]"
                     }`}
                   >
-                    <div className="flex justify-between items-start gap-4">
-                      <div>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4">
+                      <div className="min-w-0">
                         <div className="font-medium">
                           {assetById.get(s.asset)?.name ?? s.asset}{" "}
                           <span className="text-xs text-[var(--text-muted)] font-[family-name:var(--font-mono)]">
@@ -228,7 +228,7 @@ export default function WindowPlanner({ jobs, assets }: Props) {
                         </div>
                         <div className="text-sm text-[var(--text-muted)] mt-0.5">{s.rationale}</div>
                       </div>
-                      <div className="text-right shrink-0">
+                      <div className="flex sm:flex-col sm:text-right gap-3 sm:gap-0 shrink-0">
                         <div className="font-[family-name:var(--font-mono)] text-sm">{s.crew_hours}h</div>
                         <div className="font-[family-name:var(--font-mono)] text-sm text-[var(--accent-teal)]">
                           {fmtRupee(s.exposure_protected)}
@@ -265,7 +265,7 @@ export default function WindowPlanner({ jobs, assets }: Props) {
           {/* Batched */}
           {result.batched.length > 0 && (
             <section>
-              <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold mb-3">
+              <h2 className="font-[family-name:var(--font-display)] text-lg sm:text-xl font-semibold mb-3">
                 Batched — shared isolation
               </h2>
               <div className="space-y-2">
@@ -281,14 +281,14 @@ export default function WindowPlanner({ jobs, assets }: Props) {
 
           {/* Deferred */}
           <section>
-            <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold mb-3">
+            <h2 className="font-[family-name:var(--font-display)] text-lg sm:text-xl font-semibold mb-3">
               Deferred — carried forward
             </h2>
             <div className="space-y-2">
               {result.deferred.map((d) => (
                 <div key={d.job_id} className="bg-[var(--surface)] border border-[var(--border)] rounded-lg px-4 py-3">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4">
+                    <div className="min-w-0">
                       <div className="font-medium">
                         {assetById.get(d.asset)?.name ?? d.asset}{" "}
                         <span className="text-xs text-[var(--text-muted)] font-[family-name:var(--font-mono)]">
@@ -309,16 +309,16 @@ export default function WindowPlanner({ jobs, assets }: Props) {
       )}
 
       {/* Feedback panel */}
-      <section className="border-t border-[var(--border)] pt-8">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold">
+      <section className="border-t border-[var(--border)] pt-6 sm:pt-8">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 className="font-[family-name:var(--font-display)] text-lg sm:text-xl font-semibold">
             Feedback — technician notes
           </h2>
-          <div className="text-sm text-[var(--text-muted)] font-[family-name:var(--font-mono)]">
+          <div className="text-xs sm:text-sm text-[var(--text-muted)] font-[family-name:var(--font-mono)]">
             Precision: {precisionCount.total > 0 ? `${precisionCount.correct}/${precisionCount.total}` : "—"}
           </div>
         </div>
-        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 space-y-3">
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-3 sm:p-5 space-y-3">
           <select
             value={feedbackJobId}
             onChange={(e) => setFeedbackJobId(e.target.value)}
@@ -379,9 +379,9 @@ export default function WindowPlanner({ jobs, assets }: Props) {
 function Stat({ label, value, accent }: { label: string; value: string; accent?: "amber" | "teal" }) {
   const color = accent === "amber" ? "var(--accent-amber)" : accent === "teal" ? "var(--accent-teal)" : "var(--text)";
   return (
-    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-lg px-4 py-3">
-      <div className="text-[10px] uppercase tracking-wide text-[var(--text-muted)]">{label}</div>
-      <div className="font-[family-name:var(--font-mono)] text-xl font-semibold" style={{ color }}>
+    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 min-w-0">
+      <div className="text-[9px] sm:text-[10px] uppercase tracking-wide text-[var(--text-muted)] truncate">{label}</div>
+      <div className="font-[family-name:var(--font-mono)] text-base sm:text-xl font-semibold truncate" style={{ color }}>
         {value}
       </div>
     </div>
