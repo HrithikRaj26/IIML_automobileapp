@@ -187,11 +187,22 @@ Return only the JSON object matching the required schema. Do not invent job IDs,
       config: {
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 8192,
+        thinkingConfig: { thinkingBudget: 0 },
       },
     });
 
     const text = response.text;
+    const finishReason = response.candidates?.[0]?.finishReason;
+    if (finishReason === "MAX_TOKENS") {
+      return NextResponse.json(
+        knapsackOnlyFallback(
+          baseline,
+          windowCrewHours,
+          "Gemini response was truncated (hit maxOutputTokens) before finishing valid JSON"
+        )
+      );
+    }
     if (!text) {
       return NextResponse.json(knapsackOnlyFallback(baseline, windowCrewHours, "Gemini returned an empty response"));
     }

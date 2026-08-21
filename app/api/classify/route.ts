@@ -69,7 +69,8 @@ Return only the JSON object matching the schema. Do not invent details not prese
       config: {
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA,
-        maxOutputTokens: 512,
+        maxOutputTokens: 2048,
+        thinkingConfig: { thinkingBudget: 0 },
       },
     });
 
